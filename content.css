@@ -1,0 +1,37 @@
+/* Mano - Content Script CSS */
+/* This file can be used to add visual enhancements to the Sisreg page */
+
+.mano-highlight {
+    outline: 2px solid #4f46e5 !important;
+    background-color: rgba(79, 70, 229, 0.1) !important;
+    transition: all 0.3s ease !important;
+}
+
+.mano-overlay {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4f46e5;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    z-index: 10000;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mano-overlay button {
+    background: white;
+    color: #4f46e5;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.mano-overlay button:hover {
+    background: #f0f9ff;
+}
