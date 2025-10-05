@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mano Assistant - Corrigido</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> Mano Assistant - Corrigido</h1>
+            <p>Assistente de automação para o Sisreg III</p>
+        </header>
+        
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fas fa-cogs"></i> Controles</h2>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-power-off"></i> Status do Assistente</label>
+                    <div>
+                        <span class="status-indicator" id="status-indicator"></span>
+                        <span id="status-text">Inativo</span>
+                        <button class="btn" id="toggle-btn">Ativar</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-camera"></i> Captura de Documento</label>
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Arraste uma imagem ou clique para selecionar</h3>
+                        <p>Formatos: JPG, PNG, GIF</p>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*" class="hidden">
+                    
+                    <div class="preview-container hidden" id="preview-container">
+                        <img id="preview-image" class="preview-image" alt="Pré-visualização">
+                        <button class="btn btn-secondary" id="remove-image-btn">
+                            <i class="fas fa-times"></i> Remover Imagem
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group hidden" id="ocr-progress-container">
+                    <label><i class="fas fa-spinner fa-spin"></i> Processando OCR</label>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="ocr-progress"></div>
+                    </div>
+                    <div id="ocr-progress-text">0%</div>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-terminal"></i> Comandos</label>
+                    <div>
+                        <button class="btn" id="scan-btn">
+                            <i class="fas fa-search"></i> Escanear Documento
+                        </button>
+                        <button class="btn btn-success" id="extract-btn">
+                            <i class="fas fa-user"></i> Extrair Dados
+                        </button>
+                        <button class="btn" id="sisreg-btn">
+                            <i class="fas fa-sign-in-alt"></i> Acessar Sisreg
+                        </button>
+                        <button class="btn" id="fill-btn">
+                            <i class="fas fa-edit"></i> Preencher Formulário
+                        </button>
+                        <button class="btn" id="search-btn">
+                            <i class="fas fa-search"></i> Buscar Vaga
+                        </button>
+                        <button class="btn" id="schedule-btn">
+                            <i class="fas fa-calendar-check"></i> Agendar Consulta
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-user"></i> Dados do Paciente</h2>
+                <div id="patient-data" class="hidden">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="patient-name" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Cartão Nacional de Saúde (CNS)</label>
+                        <input type="text" id="patient-cns" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Nascimento</label>
+                        <input type="text" id="patient-dob" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="text" id="patient-phone" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Procedimento</label>
+                        <input type="text" id="patient-procedure" readonly>
+                    </div>
+                </div>
+                <div id="no-patient-data">
+                    <p><i class="fas fa-info-circle"></i> Nenhum dado extraído ainda</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-file-alt"></i> Resultado do OCR</h2>
+            <div id="ocr-container" class="hidden">
+                <div id="ocr-result" class="ocr-result"></div>
+                <div style="margin-top: 15px;">
+                    <button class="btn" id="copy-ocr-btn">
+                        <i class="fas fa-copy"></i> Copiar Texto
+                    </button>
+                </div>
+            </div>
+            <div id="no-ocr-data">
+                <p><i class="fas fa-file-contract"></i> Nenhum documento escaneado</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2><i class="fas fa-window-maximize"></i> Visualização do Sisreg</h2>
+                <div>
+                    <button class="btn btn-secondary" id="refresh-sisreg-btn">
+                        <i class="fas fa-sync"></i> Atualizar
+                    </button>
+                    <button class="btn btn-secondary" id="clear-sisreg-btn">
+                        <i class="fas fa-times"></i> Limpar
+                    </button>
+                </div>
+            </div>
+            <iframe id="sisreg-frame" class="sisreg-frame" src="https://sisregiii.saude.gov.br/cgi-bin/index"></iframe>
+        </div>
+        
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2><i class="fas fa-file-alt"></i> Log de Ações</h2>
+                <button class="btn btn-secondary" id="clear-logs-btn">
+                    <i class="fas fa-trash"></i> Limpar Logs
+                </button>
+            </div>
+            <div class="log-area" id="log-area">
+                <div class="log-entry log-info">
+                    [00:00:00] Mano Assistant iniciado!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
